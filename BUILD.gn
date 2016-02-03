@@ -1,0 +1,35 @@
+# Copyright 2016 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//mojo/public/tools/bindings/mojom.gni")
+
+mojom("interfaces") {
+  sources = [
+    "hello_world.mojom",
+  ]
+}
+
+if (is_ios) {
+  shared_library("hello_world_ios") {
+    sources = [
+      "src/hello_world_impl.cc",
+      "src/hello_world_impl.h",
+    ]
+    deps = [
+      "//mojo/public/platform/native:system",
+      "//mojo/public/cpp/environment:standalone",
+      ":interfaces",
+    ]
+  }
+}
+
+group("hello_world") {
+  deps = [
+    ":interfaces"
+  ]
+
+  data_deps = [
+    ":hello_world_ios"
+  ]
+}
