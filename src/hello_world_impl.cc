@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "mojo/public/c/system/types.h"
+#include "sky/services/dynamic/dynamic_service_dylib.h"
 
 namespace hello {
 namespace world {
@@ -23,25 +24,14 @@ void HelloWorldImpl::SayHello(const mojo::String& name,
   callback.Run(stream.str());
 }
 
-extern "C" {
-
-MojoResult HelloWorldMain(MojoHandle client_handle, const char* service_name)
-    __attribute__((visibility("default")));
-MojoResult HelloWorldMain(MojoHandle client_handle, const char* service_name) {
-  if (strcmp(service_name, hello::world::HelloWorld::Name_) != 0) {
-    return MOJO_RESULT_NOT_FOUND;
-  }
-
-  mojo::MessagePipeHandle message_pipe_handle(client_handle);
-  mojo::ScopedMessagePipeHandle scoped_handle(message_pipe_handle);
-
-  new hello::world::HelloWorldImpl(
-      mojo::MakeRequest<hello::world::HelloWorld>(scoped_handle.Pass()));
-
-  return MOJO_RESULT_OK;
-}
-//
-}
-
 }  // namespace world
 }  // namespace hello
+
+void FlutterServicePerform(mojo::ScopedMessagePipeHandle client_handle,
+                           const mojo::String& service_name) {
+  if (service_name == hello::world::HelloWorld::Name_) {
+    new hello::world::HelloWorldImpl(
+        mojo::MakeRequest<hello::world::HelloWorld>(client_handle.Pass()));
+    return;
+  }
+}

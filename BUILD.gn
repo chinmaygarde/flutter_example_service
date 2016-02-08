@@ -6,30 +6,27 @@ import("//mojo/public/tools/bindings/mojom.gni")
 
 mojom("interfaces") {
   sources = [
-    "hello_world.mojom",
+    "mojom/hello_world.mojom",
   ]
 }
 
 if (is_ios) {
-  shared_library("hello_world_ios") {
+  shared_library("platform_lib") {
+    output_name = "HelloWorld"
+
     sources = [
       "src/hello_world_impl.cc",
       "src/hello_world_impl.h",
     ]
     deps = [
-      "//mojo/public/platform/native:system",
-      "//mojo/public/cpp/environment:standalone",
+      "//sky/services/dynamic:dylib",
       ":interfaces",
     ]
   }
 }
 
 group("hello_world") {
-  deps = [
-    ":interfaces"
-  ]
-
   data_deps = [
-    ":hello_world_ios"
+    ":platform_lib"
   ]
 }

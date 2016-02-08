@@ -1,0 +1,6 @@
+name: hello_world
+version: 0.0.1
+description: A simple hello world package with native dependencies
+author: Flutter Team <flutter-dev@googlegroups.com>
+environment:
+  sdk: '>=1.0.0 <2.0.0'
